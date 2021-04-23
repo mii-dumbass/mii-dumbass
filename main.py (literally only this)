@@ -1,0 +1,52 @@
+import PIL.Image
+#library needed
+
+ASCII_CHARS = "@#S%?*+;:,."
+#characters needed
+
+def resize_image(image, new_width=100):
+    width, height = image.size
+    ratio = height / width
+    new_height = int(new_width * ratio)
+    resized_image = image.resize((new_width, new_height))
+    return resized_image
+
+#resizing 
+
+def grayify(image):
+    return image.convert("L")
+
+#turn something black and white if it isn't
+
+def pixels_to_ascii(image):
+    pixels = image.getdata()
+    return "".join(ASCII_CHARS[pixel // 25] for pixel in pixels)
+
+# Pixel per Ascii image 
+
+def main(new_width=100):
+    path = input("Enter a valid pathname to an image:\n")
+    try:
+        image = PIL.Image.open(path)
+    except FileNotFoundError:
+        print(path, "is not a valid pathname to an image ")
+        return
+    except PIL.UnidentifiedImageError:
+        print("Something went wrong opening the image")
+        return
+    print("The code has finished. badamdmumumumnunununun")
+    new_image_data = pixels_to_ascii(grayify(resize_image(image)))
+    pixel_count = len(new_image_data)
+    ascii_image = "\n".join(
+        new_image_data[i : i + new_width]
+        for i in range(0, pixel_count, new_width)
+    )
+    print(ascii_image)
+
+    with open(path.replace("jpg", "txt"), "w") as f:
+        f.write(ascii_image)
+
+#to process it and make sure it gets displayed in command prompt (and made as a txt with the same name as the jpg) 
+
+if __name__ == "__main__":
+    main()
